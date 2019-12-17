@@ -7,4 +7,5 @@ target/
 .gitattributes
 xxl-job-admin/
 xxl-job-core/
+xxl-job-executor-samples/
 
