@@ -49,8 +49,8 @@ CREATE TABLE `xxl_job_log` (
   `handle_msg` text COMMENT '执行-日志',
   `alarm_status` tinyint(4) NOT NULL DEFAULT '0' COMMENT '告警状态：0-默认、1-无需告警、2-告警成功、3-告警失败',
   PRIMARY KEY (`id`),
-  KEY `I_trigger_time` (`trigger_time`),
-  KEY `I_handle_code` (`handle_code`)
+  KEY `idx_trigger_time` (`trigger_time`),
+  KEY `idx_handle_code` (`handle_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `xxl_job_log_report` (
@@ -60,7 +60,7 @@ CREATE TABLE `xxl_job_log_report` (
   `suc_count` int(11) NOT NULL DEFAULT '0' COMMENT '执行成功-日志数量',
   `fail_count` int(11) NOT NULL DEFAULT '0' COMMENT '执行失败-日志数量',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `i_trigger_day` (`trigger_day`) USING BTREE
+  UNIQUE KEY `uk_trigger_day` (`trigger_day`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `xxl_job_logglue` (
@@ -77,11 +77,11 @@ CREATE TABLE `xxl_job_logglue` (
 CREATE TABLE `xxl_job_registry` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `registry_group` varchar(50) NOT NULL,
-  `registry_key` varchar(255) NOT NULL,
-  `registry_value` varchar(255) NOT NULL,
+  `registry_key` varchar(50) NOT NULL,
+  `registry_value` varchar(100) NOT NULL,
   `update_time` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `i_g_k_v` (`registry_group`,`registry_key`,`registry_value`)
+  KEY `idx_g_k_v` (`registry_group`,`registry_key`,`registry_value`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `xxl_job_group` (
@@ -101,7 +101,7 @@ CREATE TABLE `xxl_job_user` (
   `role` tinyint(4) NOT NULL COMMENT '角色：0-普通用户、1-管理员',
   `permission` varchar(255) DEFAULT NULL COMMENT '权限：执行器ID列表，多个逗号分割',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `i_username` (`username`) USING BTREE
+  UNIQUE KEY `uk_username` (`username`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `xxl_job_lock` (
@@ -110,7 +110,7 @@ CREATE TABLE `xxl_job_lock` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
-INSERT INTO `xxl_job_group`(`id`, `app_name`, `title`, `order`, `address_type`, `address_list`) VALUES (1, 'xxl-job-executor-sample', '示例执行器', 1, 0, NULL);
+INSERT INTO `xxl_job_group`(`id`, `app_name`, `title`, `order`, `address_type`, `address_list`) VALUES (1, 'base-job', '示例执行器', 1, 0, NULL);
 INSERT INTO `xxl_job_info`(`id`, `job_group`, `job_cron`, `job_desc`, `add_time`, `update_time`, `author`, `alarm_email`, `executor_route_strategy`, `executor_handler`, `executor_param`, `executor_block_strategy`, `executor_timeout`, `executor_fail_retry_count`, `glue_type`, `glue_source`, `glue_remark`, `glue_updatetime`, `child_jobid`) VALUES (1, 1, '0 0 0 * * ? *', '测试任务1', '2018-11-03 22:21:31', '2018-11-03 22:21:31', 'XXL', '', 'FIRST', 'demoJobHandler', '', 'SERIAL_EXECUTION', 0, 0, 'BEAN', '', 'GLUE代码初始化', '2018-11-03 22:21:31', '');
 INSERT INTO `xxl_job_user`(`id`, `username`, `password`, `role`, `permission`) VALUES (1, 'admin', 'e10adc3949ba59abbe56e057f20f883e', 1, NULL);
 INSERT INTO `xxl_job_lock` ( `lock_name`) VALUES ( 'schedule_lock');
